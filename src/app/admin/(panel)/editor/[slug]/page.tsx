@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { allCategories } from "@/lib/catalog";
-import { getDraftPage } from "@/lib/pages";
+import { allPages, getDraftPage } from "@/lib/pages";
+import { getSiteSettings } from "@/lib/settings";
 import { WebsiteEditor, type EditorSection } from "@/components/admin/WebsiteEditor";
 
 export default async function EditPageScreen(props: PageProps<"/admin/editor/[slug]">) {
@@ -8,6 +9,11 @@ export default async function EditPageScreen(props: PageProps<"/admin/editor/[sl
 
   const draft = getDraftPage(slug);
   const categories = allCategories();
+  const pages = allPages().map((page) => ({
+    slug: page.slug,
+    title: page.title,
+    isPublished: page.isPublished,
+  }));
 
   if (!draft) notFound();
 
@@ -23,9 +29,11 @@ export default async function EditPageScreen(props: PageProps<"/admin/editor/[sl
       pageId={draft.page.id}
       slug={draft.page.slug}
       pageTitle={draft.page.title}
+      pages={pages}
       sections={sections}
       hasDraftChanges={draft.page.hasDraftChanges}
       categories={categories}
+      siteSettings={getSiteSettings()}
     />
   );
 }

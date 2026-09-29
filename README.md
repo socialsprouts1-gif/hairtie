@@ -58,13 +58,16 @@ There is no login anywhere, for customers or for the admin.
 - Customers check out as guests. Their order number and phone are what they use
   to track an order.
 - The wishlist is kept in a cookie in the visitor's own browser.
-- `/admin` is open to anyone who can reach it.
+- `/admin` is open until you set `ADMIN_PASSWORD`.
 
-> **Before you put this on a public URL:** anyone who finds `/admin` can change
-> your products and read your orders. On your own computer that is fine. On the
-> public internet, put it behind your host's password protection (Vercel's
-> Deployment Protection, Netlify's site password, or HTTP basic auth in nginx),
-> or ask a developer to switch the sign-in back on.
+> **Before you put this on a public URL**, set two environment variables:
+>
+> | | |
+> | --- | --- |
+> | `ADMIN_PASSWORD` | Otherwise anyone who finds `/admin` can read your customers' addresses and change your shop. Set it and `/admin` asks for it once per device. The pages, the API routes and every admin action all check it. |
+> | `BLOB_READ_WRITE_TOKEN` | On Vercel and other serverless hosts the filesystem is read-only, so without a store **nothing is saved — customer orders included**. Connect a Vercel Blob store and this is set for you. |
+>
+> The admin says so plainly when either is missing.
 
 ---
 
@@ -81,23 +84,62 @@ Mobile-first throughout: sticky header, bottom navigation, swipeable product
 images, a sticky add-to-bag bar and a WhatsApp button on every screen.
 
 ### Admin panel
-Dashboard · Orders · Products · Categories · Website Editor · Appearance · Media ·
-Customers · Discounts · Reviews · Analytics · Store Settings.
+Dashboard · Orders · Products · Categories · Payments · Website Editor ·
+Appearance · Media · Customers · Discounts · Reviews · Analytics · Store Settings.
 
-Customers are derived from order history rather than stored as accounts — one row
-per email address, with everything that person has bought.
+- **Orders** — search and filter, tick several and confirm, pack, ship, deliver
+  or cancel them in one go, per-order courier and tracking, refunds, invoices,
+  and a CSV export.
+- **Products** — full editor with variants, images, specifications and SEO;
+  bulk publish / draft / archive / delete; inline stock edits; CSV export.
+- **Customers** — derived from order history rather than accounts, one row per
+  email address. Add your own tags and notes, block an address from ordering
+  (checkout then refuses it), filter by tag or block, and export to CSV.
 
 ### Visual website editor
-Click any section — in the list or straight on the live preview — to edit it. Drag
-to reorder, duplicate, hide or delete. Edits save as you type into a **draft**; the
-public site only changes when you press **Publish**, and **Discard** restores the
-last published version. Eighteen section types ship with it.
+A theme-editor-style builder: a section tree on the left, the section's settings
+beside it, and the real page on the right.
+
+- **Click to edit** — pick a section in the tree or click it straight on the
+  preview. The preview highlights whatever the pointer is over, in both
+  directions.
+- **Drag and drop at two levels** — sections reorder within the page, and a
+  section's *blocks* (a FAQ question, a review, an Instagram photo, a gallery
+  image, a column) reorder inside their section. A block never escapes its
+  section, and the canvas pulls back while you drag so you can see where things
+  will land.
+- **Blocks are first-class** — each one can be added, duplicated, hidden or
+  deleted from the tree, and hiding one keeps its content in the draft.
+- **Add anywhere** — the "+" between two rows inserts a section at that exact
+  spot; the picker is searchable and grouped.
+- **Undo / redo** — ⌘Z and ⌘⇧Z, up to 60 steps, covering edits, reorders and
+  deletions alike.
+- **Header and footer too** — both are edited in the same panel, with a
+  drag-and-drop menu builder (including dropdown links) and drag-and-drop footer
+  columns. They belong to every page, so they save straight away rather than
+  waiting for Publish; the panel says so.
+- **Desktop / tablet / mobile** previews, plus a full-width mode.
+
+Page edits save as you type into a **draft**; the public site only changes when
+you press **Publish**, and **Discard** restores the last published version.
+Twenty-nine section types ship with it.
 
 ### Payments
-Cash on Delivery works out of the box. Razorpay (UPI, cards, net banking, wallets)
-activates as soon as the keys are present. Totals are always recalculated on the
-server, stock is verified before an order is written, and payments are only
-accepted after the Razorpay signature is verified.
+Configured from **Admin → Payments**, with nothing to redeploy:
+
+- **Cash on Delivery** — on or off, an optional handling charge, and a minimum
+  and maximum order value it applies to.
+- **Online payment** — Razorpay (UPI, cards, net banking, wallets). Paste the
+  Key ID and Key Secret, press **Test connection**, and it goes live. A test-mode
+  flag warns if a live key is used while test mode is still ticked.
+- Keys entered here are stored server-side and never sent to a browser: the page
+  is told only *whether* a secret is set. Leave a field blank and the matching
+  environment variable is used instead, so a deployment can still be configured
+  entirely through its hosting environment.
+
+Totals are always recalculated on the server, stock is verified before an order
+is written, and payments are only accepted after the Razorpay signature is
+verified.
 
 ### SEO
 Per-product and per-page titles, descriptions, keywords, canonical URLs and Open
@@ -114,9 +156,11 @@ None are required. Each one only switches on an extra feature — see
 | Variable | What it does |
 | --- | --- |
 | `NEXT_PUBLIC_SITE_URL` | Public address, for canonical URLs and the sitemap. Also settable in Admin → Store Settings. |
-| `RAZORPAY_KEY_ID` / `RAZORPAY_KEY_SECRET` | Turns on online payment. Without them, checkout is Cash on Delivery only. |
-| `RAZORPAY_WEBHOOK_SECRET` | Verifies Razorpay webhooks at `/api/payments/razorpay/webhook`. |
-| `MEDIA_DRIVER` | `local` (default) or `supabase`. |
+| `ADMIN_PASSWORD` | Puts a password on `/admin`. Unset, the admin is open — fine locally, not on a public URL. |
+| `BLOB_READ_WRITE_TOKEN` | Saves the shop to Vercel Blob (privately). Vercel sets this when you connect a Blob store. Without it, a serverless host keeps nothing. |
+| `RAZORPAY_KEY_ID` / `RAZORPAY_KEY_SECRET` | Fallback for online payment when the fields in Admin → Payments are blank. Without either, checkout is Cash on Delivery only. |
+| `RAZORPAY_WEBHOOK_SECRET` | Fallback webhook secret for `/api/payments/razorpay/webhook`. |
+| `MEDIA_DRIVER` | `blob`, `local` or `supabase`. Left unset, it picks Blob when one is connected and the local disk otherwise. |
 | `SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY` / `SUPABASE_STORAGE_BUCKET` | Where uploaded images go when `MEDIA_DRIVER=supabase`. |
 
 ---
@@ -137,17 +181,21 @@ None are required. Each one only switches on an extra feature — see
     │   └── sitemap.ts · robots.ts
     ├── components/         # storefront/ · sections/ · admin/ · ui/
     └── lib/
-        ├── store.ts        # the JSON document: load, save, mutate
+        ├── store.ts        # the JSON document: Vercel Blob / disk / memory
+        ├── admin-auth.ts   # the shared admin password and its cookie
         ├── types.ts        # the data model
-        ├── catalog.ts · cart.ts · orders.ts · pages.ts · settings.ts
-        └── seo.ts · storage.ts · razorpay.ts · whatsapp.ts
+        ├── sections.ts     # the block registry both the editor and site read
+        ├── payments.ts     # gateway keys — server-only, never serialised out
+        ├── catalog.ts · cart.ts · orders.ts · customers.ts · pages.ts · settings.ts
+        └── seo.ts · storage.ts · razorpay.ts · csv.ts · whatsapp.ts
 ```
 
 ### Where to change things
 
 | To change | Edit |
 | --- | --- |
-| A new page-builder block | `src/lib/sections.ts` + a component in `src/components/sections/SectionRenderer.tsx` |
+| A new page-builder section | `src/lib/sections.ts` + a component in `src/components/sections/SectionRenderer.tsx` |
+| Draggable blocks inside a section | give that section a `blocksKey` pointing at a `repeater` field in `src/lib/sections.ts` |
 | Product fields | `src/lib/types.ts`, then `src/components/admin/ProductForm.tsx` |
 | Shipping or tax logic | `src/lib/cart.ts` |
 | Order rules | `src/lib/orders.ts` |

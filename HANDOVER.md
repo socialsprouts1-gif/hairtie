@@ -26,12 +26,13 @@ The menu on the left is grouped by how often you'll use it.
 | **Orders** | Every order. Open one to confirm it, add tracking, or print an invoice. |
 | **Products** | Add, edit, price and stock your products. |
 | **Categories** | The groups customers browse by, such as Claw Clips or Tote Bags. |
+| **Payments** | Turn Cash on Delivery and online payment on or off, and connect your payment account. |
 
 **Your website**
 
 | | |
 | --- | --- |
-| **Website Editor** | Change the banners, headings and sections on your pages. |
+| **Website Editor** | Change the banners, headings, sections and blocks on your pages. |
 | **Appearance** | Colours, fonts, button shapes, page width. |
 | **Media** | All your photos in one place. Upload once, use anywhere. |
 
@@ -39,7 +40,7 @@ The menu on the left is grouped by how often you'll use it.
 
 | | |
 | --- | --- |
-| **Customers** | Who has bought from you, what they've spent. |
+| **Customers** | Who has bought from you, what they've spent, your notes about them. |
 | **Discounts** | Coupon codes to share on Instagram. |
 | **Reviews** | Customer reviews waiting for you to publish. |
 | **Analytics** | Sales over time, best sellers, categories that sell. |
@@ -101,8 +102,61 @@ it on the order so your records match.
 **Messaging a customer:** the *Message customer* button opens WhatsApp with their
 number already filled in.
 
+### Doing several at once
+On the orders list, tick the box beside each order you want and a bar appears at
+the top: **Confirm**, **Mark packing**, **Mark shipped**, **Mark delivered** or
+**Cancel orders**. Handy on a busy morning. Cancelling in bulk still puts every
+item back into stock, one order at a time.
+
+**Export CSV** at the top of the list downloads every order — names, addresses,
+contents and totals — as a spreadsheet you can open in Excel.
+
+### Customers
 **Customers** builds itself from your orders — there are no accounts to manage.
 Each person appears once, with everything they have bought.
+
+Open someone and you can add:
+
+- **Tags** — *VIP*, *Wholesale*, *Needs follow-up*, or anything you type. You can
+  filter the list by tagged customers later.
+- **A note** — "prefers pastel shades", "always asks for gift wrap". Only you see
+  it.
+- **Block from ordering** — for the rare troublesome buyer. Checkout then refuses
+  any new order from that email address and tells them to get in touch.
+
+There is an **Export CSV** button here too.
+
+---
+
+## 3b. Taking payments
+
+**Payments.**
+
+Two ways to be paid, and you control both:
+
+**Cash on Delivery** works from the moment you switch it on — nothing to sign up
+for. You can also set:
+
+- a **handling charge** added to COD orders (leave it at 0 for none),
+- a **minimum** and **maximum** order value COD applies to, so a very large order
+  has to be paid for up front.
+
+**Online payment** (UPI, cards, net banking, wallets) goes through Razorpay:
+
+1. Open a Razorpay account and go to its API keys page — the **Get your keys**
+   button takes you there.
+2. Copy the **Key ID** and **Key Secret** into this page and press **Save**.
+3. Press **Test connection**. If it says Razorpay accepted them, you're done.
+4. While you are trying it out, leave **This is a test account** ticked. Untick
+   it when you switch to your live keys — the page warns you if you forget.
+
+> **Your Key Secret is never shown again.** It is stored on your server, not in
+> your browser. If you ever need to change it, just type the new one in; leave the
+> field alone and the saved one is kept.
+
+The top of the page always says where things stand — whether COD is on, whether
+online payment is actually connected, and whether your keys came from this page
+or from your hosting settings.
 
 ---
 
@@ -123,8 +177,28 @@ On the left you can also:
 - **👁 Hide** a section without deleting it (useful for a seasonal banner).
 - **Copy** a section to duplicate it.
 - **🗑 Delete** a section.
-- **Add a section** to put something new on the page — there are eighteen kinds,
-  from hero banners and product rows to FAQs and WhatsApp buttons.
+- **Add a section** to put something new on the page — there are twenty-one
+  kinds, from hero banners and product rows to FAQs and WhatsApp buttons.
+- **Hover between two sections** and a small **+** appears — that adds the new
+  section exactly there instead of at the bottom.
+- **Undo** and **Redo** (the ↺ ↻ arrows, or ⌘Z / ⌘⇧Z) take back anything,
+  including a section you deleted by mistake.
+- Switch the preview between **desktop, tablet and phone**, or open the
+  **full-width** view to see the page without the panels.
+
+### Items inside a section ("blocks")
+Some sections are made of smaller repeating pieces — each FAQ question, each
+review, each Instagram photo, each gallery image, each column.
+
+Click the small **▸ arrow** next to such a section and those pieces appear
+indented underneath it. From there you can:
+
+- **Drag** one into a different order.
+- **Click** one to edit just that piece.
+- **👁 Hide** one for now — its words and picture are kept, it simply stops
+  showing on the site.
+- **Copy** or **🗑 Delete** one.
+- **+ Add** another at the end.
 
 ### Product rows
 A product row doesn't need you to pick products one by one. Choose *Which
@@ -220,7 +294,7 @@ store details, WhatsApp number, colours and fonts, and basic SEO.
 - Moving to a proper database, if the shop grows past a few thousand products or
   several people need to edit it at the same time.
 - Loyalty points, gift cards, subscriptions, multi-language, multi-currency.
-- New kinds of page sections beyond the eighteen that ship with the site.
+- New kinds of page sections beyond the twenty-one that ship with the site.
 
 ### Third-party costs — paid to them, not to your developer
 
